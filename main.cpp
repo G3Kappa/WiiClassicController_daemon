@@ -6,6 +6,8 @@
 // The Arduino has it set to 10ms, so by halving that I try to make sure every packet is handled right as it's available.
 #define SLEEP_MS 5
 
+#define PI 3.14159265358979323846
+
 #include <cstdlib>
 #include <cmath>
 #ifdef DEBUG
@@ -40,8 +42,8 @@ int g_ranalogy = 0;
 void cartesianToPolarSP(double x, double y, double* r, double* theta)
 {
 	*r = sqrt( pow(x, 2) + pow(y, 2) );
-	*theta = atan2( y, x ) + 3.14 / 2;
-	*theta = 360 - fmod(*theta * 180 / 3.14 + 180, 360);
+	*theta = atan2( y, x ) + PI / 2;
+	*theta = (360 - (int)fmod(*theta * 180 / PI + 180, 360)) % 360;
 }
 
 void onAnalogMove(char analog, char info)
@@ -68,6 +70,8 @@ void onAnalogMove(char analog, char info)
 		cartesianToPolarSP(g_ranalogx, g_ranalogy, &r, &theta);
 		SetContPov( r == 0 ? -1 : (int)theta * 100, VJ_INTERFACE, 2);
 	}
+	
+	//printf("Theta: %d\n", (int)theta);
 }
 
 int main()
