@@ -43,7 +43,10 @@ void cartesianToPolarSP(double x, double y, double* r, double* theta)
 {
 	*r = sqrt( pow(x, 2) + pow(y, 2) );
 	*theta = atan2( y, x ) + PI / 2;
-	*theta = (360 - (int)fmod(*theta * 180 / PI + 180, 360)) % 360;
+	*theta = fmod(*theta * 180 / PI + 180, 360);
+	*theta = (360 - (int)*theta) % 360;
+	// Due to some floating point error, I have to approximate to the nearest % 5 number
+	*theta -= (int)*theta % 5;
 }
 
 void onAnalogMove(char analog, char info)
@@ -71,7 +74,7 @@ void onAnalogMove(char analog, char info)
 		SetContPov( r == 0 ? -1 : (int)theta * 100, VJ_INTERFACE, 2);
 	}
 	
-	//printf("Theta: %d\n", (int)theta);
+	printf("Theta: %d\n", (int)theta);
 }
 
 int main()
